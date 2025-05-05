@@ -99,7 +99,7 @@ def find_doctors(specialty, location):
 
 
 def main():
-    st.title("AI-driven Medical Report Analyzer & Specialist Finder")
+    st.title("AI-driven Medical Report Analyzer & Specialist Find")
     st.write("Upload a medical report (image or PDF), get analysis, ask questions, and find relevant specialists.")
 
     # Session state
