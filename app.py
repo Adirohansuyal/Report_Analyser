@@ -44,7 +44,7 @@ def add_bg_from_local(image_path):
     st.markdown(css, unsafe_allow_html=True)
 
 # Set background
-add_bg_from_local("assets-task_01jtkehkkxff893hsa0dds6trg-1746557123_img_3.webp")
+add_bg_from_local("adi.jpeg")
 
 def analyze_medical_report(content, content_type):
     prompt = "Analyze this medical report concisely. Provide key findings, diagnoses, and recommendations:"
