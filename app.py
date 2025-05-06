@@ -44,7 +44,7 @@ def add_bg_from_local(image_path):
     st.markdown(css, unsafe_allow_html=True)
 
 # Set background
-add_bg_from_local("/Users/adityasuyal/Desktop/UTU/medical-report-analyser-main/digital-art-monochrome-square-minimalism-wallpaper-preview.jpg")
+add_bg_from_local("digital-art-monochrome-square-minimalism-wallpaper-preview.jpg")
 
 def analyze_medical_report(content, content_type):
     prompt = "Analyze this medical report concisely. Provide key findings, diagnoses, and recommendations:"
