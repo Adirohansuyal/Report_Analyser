@@ -4,3 +4,4 @@ groq
 Pillow
 PyPDF2
 google-api-core
+graphviz
