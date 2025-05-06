@@ -7,6 +7,7 @@ import tempfile
 import os
 from google.api_core import exceptions
 import time
+import graphviz  # 🔄 NEW IMPORT
 
 # Hardcoded API keys
 GEMINI_API_KEY = "AIzaSyDphqA2q_ae9YAHiElrPX96ULfLFtvbfpo"
@@ -98,6 +99,33 @@ def find_doctors(specialty, location):
     return resp.choices[0].message.content
 
 
+# 🔄 NEW: Generate flowchart description
+def generate_flowchart_from_analysis(analysis_text):
+    prompt = (
+        "Based on this medical analysis, generate a step-by-step flowchart using simple terminology. "
+        "Each step should represent a stage in diagnosis, findings, or recommendation. "
+        "Use the format: Start -> Step1 -> Step2 -> ... -> End.\n\n"
+        f"Analysis:\n{analysis_text}"
+    )
+    messages = [{"role": "user", "content": prompt}]
+    resp = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=messages
+    )
+    return resp.choices[0].message.content
+
+
+# 🔄 NEW: Render flowchart using Graphviz
+def render_flowchart(flow_text):
+    steps = [s.strip() for s in flow_text.split("->")]
+    dot = graphviz.Digraph()
+    for i, step in enumerate(steps):
+        dot.node(f"{i}", step)
+        if i > 0:
+            dot.edge(f"{i-1}", f"{i}")
+    return dot
+
+
 def main():
     st.title("AI-driven Medical Report Analyzer & Specialist Find")
     st.write("Upload a medical report (image or PDF), get analysis, ask questions, and find relevant specialists.")
@@ -137,11 +165,18 @@ def main():
                 st.session_state.analysis = analyze_medical_report(text, "text")
                 os.unlink(path)
 
-    # Display analysis and derive specialty
+    # Display analysis and diagram
     if st.session_state.analysis:
         st.subheader("Analysis Results:")
         st.write(st.session_state.analysis)
-        # Let model extract specialty
+
+        # 🔄 Generate and show flowchart
+        st.subheader("Diagrammatic Representation:")
+        flow_text = generate_flowchart_from_analysis(st.session_state.analysis)
+        flowchart = render_flowchart(flow_text)
+        st.graphviz_chart(flowchart.source)
+
+        # Extract specialty
         if st.session_state.specialty is None:
             spec_resp = groq_client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
@@ -168,6 +203,7 @@ def main():
         if location and st.button("Find Doctors"):
             doctors = find_doctors(st.session_state.specialty, location)
             st.write(doctors)
+
 
 if __name__ == "__main__":
     main()
