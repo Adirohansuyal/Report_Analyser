@@ -127,7 +127,7 @@ def render_flowchart(flow_text):
 
 
 def main():
-    st.title("AI-driven Medical Report Analyzer & Specialist Find")
+    st.title("AI-driven Medical Report Analyser & Specialist Find")
     st.write("Upload a medical report (image or PDF), get analysis, ask questions, and find relevant specialists.")
 
     # Session state
