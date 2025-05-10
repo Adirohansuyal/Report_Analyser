@@ -9,10 +9,11 @@ from google.api_core import exceptions
 import time
 import graphviz  # 🔄 NEW IMPORT
 import base64
+import subprocess  # 🔄 NEW IMPORT
 
 # Hardcoded API keys
-GEMINI_API_KEY = "AIzaSyDphqA2q_ae9YAHiElrPX96ULfLFtvbfpo"
-GROQ_API_KEY = "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"
+GEMINI_API_KEY = "AIzaSyCrjgJviN3ve3MnY8cjd6h2GXGS4Yp-Sp4"
+GROQ_API_KEY = "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"
 
 def configure_clients():
     genai.configure(api_key=GEMINI_API_KEY)
@@ -27,24 +28,22 @@ gemini_model = genai.GenerativeModel('gemini-1.5-flash')
 MAX_RETRIES = 3
 RETRY_DELAY = 2  # seconds
 
-# 🔄 Add background image
-def add_bg_from_local(image_path):
-    with open(image_path, "rb") as img_file:
-        encoded_string = base64.b64encode(img_file.read()).decode()
-    css = f"""
+# 🔄 Update background styling
+def add_bg_from_local():
+    css = """
     <style>
-    .stApp {{
-        background-image: url("data:image/jpg;base64,{encoded_string}");
+    .stApp {
+        background: linear-gradient(135deg, #ff1493, #ffe6e6);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-    }}
+    }
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
 
 # Set background
-add_bg_from_local("adi.jpeg")
+add_bg_from_local()
 
 def analyze_medical_report(content, content_type):
     prompt = "Analyze this medical report concisely. Provide key findings, diagnoses, and recommendations:"
@@ -131,7 +130,10 @@ def render_flowchart(flow_text):
     return dot
 
 def main():
-    st.title("🩺 AI-driven Medical Report Analyser & Specialist Finder")
+    st.markdown(
+        "<h1 style='color: #ff1493;'>🩺 AI-driven Medical Report Analyser & Specialist Finder</h1>",
+        unsafe_allow_html=True
+    )
     st.write("Upload a medical report (image or PDF), get AI analysis, ask questions, and find relevant specialists.")
 
     if 'analysis' not in st.session_state:
@@ -150,7 +152,7 @@ def main():
                 tmp.write(uploaded_file.getvalue())
                 path = tmp.name
             image = Image.open(path)
-            st.image(image, caption="Uploaded Medical Report", use_column_width=True)
+            st.image(image, caption="Uploaded Medical Report", use_container_width=True)
             if st.button("Analyze Image Report"):
                 st.session_state.analysis = analyze_medical_report(image, "image")
             os.unlink(path)
@@ -169,7 +171,14 @@ def main():
 
     if st.session_state.analysis:
         st.subheader("Analysis Results:")
-        st.write(st.session_state.analysis)
+        st.markdown(
+            f"""
+            <div style='border: 2px solid #ff1493; padding: 15px; border-radius: 10px; background-color: #ffe6e6; color: #ff1493;'>
+                {st.session_state.analysis}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         st.subheader("Diagrammatic Representation:")
         flow_text = generate_flowchart_from_analysis(st.session_state.analysis)
@@ -192,8 +201,14 @@ def main():
             answer = chat_with_report(question, st.session_state.analysis)
             st.session_state.chat_history.append((question, answer))
         for q, a in st.session_state.chat_history:
-            st.markdown(f"**You:** {q}")
-            st.markdown(f"**Assistant:** {a}")
+            st.markdown(f"""
+            <div style='border: 1px solid #cccccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-bottom: 10px; color: #ff1493;'>
+                <strong>You:</strong> {q}
+            </div>
+            <div style='border: 1px solid #ff1493; padding: 10px; border-radius: 5px; background-color: #ffe6e6; margin-bottom: 10px; color: #ff1493;'>
+                <strong>Assistant:</strong> {a}
+            </div>
+            """, unsafe_allow_html=True)
 
         st.subheader("Find Specialists")
         location = st.text_input("Enter location (city, area):")
