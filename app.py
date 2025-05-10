@@ -33,7 +33,7 @@ def add_bg_from_local():
     css = """
     <style>
     .stApp {
-        background: linear-gradient(135deg, #ff1493, #ffe6e6);
+        background: linear-gradient(135deg, #ffe6e6, #ff1493); /* Light pink to dark pink */
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
