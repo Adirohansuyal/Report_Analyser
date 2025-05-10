@@ -132,9 +132,7 @@ def render_flowchart(flow_text):
 def main():
     st.markdown(
         """
-        <h1 style='color: #ff1493;'>
-            <span style='color: orange;'>AI-driven</span> Medical Report Analyser & Specialist Finder
-        </h1>
+        <h1 style='color: #800080;'>🩺 AI-driven Medical Report Analyser & Specialist Finder</h1>
         """,
         unsafe_allow_html=True
     )
