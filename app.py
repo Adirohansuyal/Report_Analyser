@@ -10,10 +10,11 @@ import time
 import graphviz  # 🔄 NEW IMPORT
 import base64
 import subprocess  # 🔄 NEW IMPORT
+import html  # 🔄 NEW IMPORT
 
 # Hardcoded API keys
 GEMINI_API_KEY = "AIzaSyCrjgJviN3ve3MnY8cjd6h2GXGS4Yp-Sp4"
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 
 def configure_clients():
     genai.configure(api_key=GEMINI_API_KEY)
@@ -141,7 +142,7 @@ def main():
     if 'analysis' not in st.session_state:
         st.session_state.analysis = None
     if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+        st.session_state.chat_history = []  # Initialize chat history as an empty list
     if 'specialty' not in st.session_state:
         st.session_state.specialty = None
 
@@ -173,10 +174,11 @@ def main():
 
     if st.session_state.analysis:
         st.subheader("Analysis Results:")
+        escaped_analysis = html.escape(st.session_state.analysis)  # Escape the analysis result
         st.markdown(
             f"""
             <div style='border: 2px solid #ff1493; padding: 15px; border-radius: 10px; background-color: #ffe6e6; color: #ff1493;'>
-                {st.session_state.analysis}
+                {escaped_analysis}
             </div>
             """,
             unsafe_allow_html=True
@@ -199,9 +201,11 @@ def main():
 
         st.subheader("Ask Questions About the Report:")
         question = st.text_input("Your question:")
-        if question:
+        if question and st.button("Submit Question"):
             answer = chat_with_report(question, st.session_state.analysis)
-            st.session_state.chat_history.append((question, answer))
+            st.session_state.chat_history.append((question, answer))  # Append the question and answer to chat history
+
+        # Display chat history
         for q, a in st.session_state.chat_history:
             st.markdown(f"""
             <div style='border: 1px solid #cccccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-bottom: 10px; color: #ff1493;'>
