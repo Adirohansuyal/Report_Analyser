@@ -96,16 +96,20 @@ def chat_with_report(question, analysis_text):
     return resp.choices[0].message.content
 
 def find_doctors(specialty, location):
-    prompt = (
-        f"List the top 5 {specialty} specialists in {location}. "
-        "For each, provide name, clinic/hospital, address, and contact number."
-    )
-    messages = [{"role": "user", "content": prompt}]
-    resp = groq_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages
-    )
-    return resp.choices[0].message.content
+    try:
+        prompt = (
+            f"List the top 5 {specialty} specialists in {location}. "
+            "For each, provide name, clinic/hospital, address, and contact number."
+        )
+        messages = [{"role": "user", "content": prompt}]
+        resp = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages
+        )
+        return resp.choices[0].message.content
+    except groq.AuthenticationError:
+        st.error("Authentication failed. Please check your Groq API key.")
+        return "Unable to fetch doctors due to authentication error."
 
 def generate_flowchart_from_analysis(analysis_text):
     prompt = (
